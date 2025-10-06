@@ -3,20 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bell, Calendar, FileText, AlertTriangle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export type NotificationType = "reminder" | "deadline" | "document" | "alert";
-
-interface Notification {
-  id: string;
-  type: NotificationType;
-  title: string;
-  message: string;
-  timestamp: string;
-  isNew?: boolean;
-}
+import { AppNotification } from "@/types";
 
 interface NotificationPanelProps {
-  notifications: Notification[];
+  notifications: AppNotification[];
   onDismiss?: (id: string) => void;
 }
 
@@ -43,6 +33,18 @@ const notificationConfig = {
   },
 };
 
+const formatTimestamp = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
+  if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  return "Just now";
+};
+
 export function NotificationPanel({ notifications, onDismiss }: NotificationPanelProps) {
   if (notifications.length === 0) {
     return (
@@ -56,7 +58,7 @@ export function NotificationPanel({ notifications, onDismiss }: NotificationPane
   return (
     <div className="space-y-3">
       {notifications.map((notification) => {
-        const config = notificationConfig[notification.type];
+        const config = notificationConfig[notification.kind];
         const Icon = config.icon;
 
         return (
@@ -64,7 +66,7 @@ export function NotificationPanel({ notifications, onDismiss }: NotificationPane
             key={notification.id}
             className={cn(
               "p-4 hover:shadow-card transition-all duration-300 animate-fade-in",
-              notification.isNew && "border-l-4 border-l-primary"
+              !notification.read && "border-l-4 border-l-primary"
             )}
           >
             <div className="flex items-start gap-3">
@@ -75,7 +77,7 @@ export function NotificationPanel({ notifications, onDismiss }: NotificationPane
                 <div className="flex items-start justify-between mb-1">
                   <h4 className="font-semibold text-sm">{notification.title}</h4>
                   <div className="flex items-center gap-2">
-                    {notification.isNew && (
+                    {!notification.read && (
                       <Badge variant="default" className="text-xs">
                         New
                       </Badge>
@@ -93,10 +95,10 @@ export function NotificationPanel({ notifications, onDismiss }: NotificationPane
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  {notification.message}
+                  {notification.body}
                 </p>
                 <span className="text-xs text-muted-foreground">
-                  {notification.timestamp}
+                  {formatTimestamp(notification.createdAt)}
                 </span>
               </div>
             </div>
