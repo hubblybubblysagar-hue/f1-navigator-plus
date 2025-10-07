@@ -5,11 +5,13 @@ import { Sidebar } from "@/components/Sidebar";
 import { Stepper } from "@/components/Stepper";
 import { FormDrawer } from "@/components/FormDrawer";
 import { PrivacyFooter } from "@/components/PrivacyFooter";
+import { ActivityList } from "@/components/ActivityList";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useApp } from "@/context/AppContext";
 import { ArrowLeft, Download, Calendar, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -146,8 +148,29 @@ export default function MilestoneDetail() {
               </Card>
             </div>
 
-            {/* Right: Step Content */}
+            {/* Right: Step Content & Activity */}
             <div className="lg:col-span-2">
+              <Tabs defaultValue="steps" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-4">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="steps">Steps</TabsTrigger>
+                  <TabsTrigger value="activity">Activity</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="overview">
+                  <Card className="p-6">
+                    <h3 className="font-bold mb-4">Milestone Overview</h3>
+                    <p className="text-muted-foreground mb-4">{milestone.description}</p>
+                    {milestone.notes && (
+                      <div className="p-4 bg-muted rounded-lg">
+                        <h4 className="font-semibold mb-2">Notes</h4>
+                        <p className="text-sm">{milestone.notes}</p>
+                      </div>
+                    )}
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="steps">
               <Card className="p-6">
                 {currentStep ? (
                   <div className="space-y-6">
@@ -260,6 +283,15 @@ export default function MilestoneDetail() {
                   </div>
                 )}
               </Card>
+                </TabsContent>
+
+                <TabsContent value="activity">
+                  <Card className="p-6">
+                    <h3 className="font-bold mb-4">Activity Timeline</h3>
+                    <ActivityList activities={state.activities} milestoneId={milestone.id} />
+                  </Card>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </main>

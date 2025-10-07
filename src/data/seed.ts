@@ -1,4 +1,4 @@
-import { Milestone, AppNotification, StoredDoc } from "@/types";
+import { Milestone, AppNotification, StoredDoc, ActivityEntry, ChatThread } from "@/types";
 
 export const seedMilestones: Milestone[] = [
   {
@@ -190,5 +190,124 @@ export const seedDocuments: StoredDoc[] = [
     uploadedAt: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
     milestoneId: "3",
     size: 450000,
+  },
+];
+
+export const seedActivities: ActivityEntry[] = [
+  {
+    id: "act-1",
+    milestoneId: "4",
+    type: "step_completed",
+    title: "Completed SS-5 form",
+    description: "Social Security Number application form filled",
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    actor: "user",
+    relatedStepId: "ssn-2",
+  },
+  {
+    id: "act-2",
+    milestoneId: "4",
+    type: "appointment_booked",
+    title: "SSA appointment scheduled",
+    description: "Appointment booked for March 25, 2024 at 10:00 AM",
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    actor: "user",
+    relatedStepId: "ssn-3",
+  },
+  {
+    id: "act-3",
+    milestoneId: "5",
+    type: "doc_uploaded",
+    title: "Job offer letter uploaded",
+    description: "Uploaded offer letter from employer for CPT",
+    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    actor: "user",
+    relatedDocId: "doc-5",
+  },
+  {
+    id: "act-4",
+    milestoneId: "2",
+    type: "status_change",
+    title: "I-20 milestone completed",
+    description: "All I-20 verification steps finished",
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    actor: "system",
+  },
+  {
+    id: "act-5",
+    type: "deadline_created",
+    title: "OPT application window opening soon",
+    description: "Reminder set for 90 days before program completion",
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    actor: "system",
+    milestoneId: "6",
+  },
+  {
+    id: "act-6",
+    milestoneId: "1",
+    type: "step_completed",
+    title: "Visa interview attended",
+    description: "Successfully completed embassy interview",
+    createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+    actor: "user",
+    relatedStepId: "f1-4",
+  },
+  {
+    id: "act-7",
+    milestoneId: "3",
+    type: "doc_uploaded",
+    title: "SEVIS payment receipt uploaded",
+    description: "I-901 fee payment confirmation saved",
+    createdAt: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
+    actor: "user",
+    relatedDocId: "doc-4",
+  },
+];
+
+export const seedChatThreads: ChatThread[] = [
+  {
+    id: "thread-1",
+    title: "SSN appointment requirements",
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    messages: [
+      {
+        id: "msg-1",
+        role: "user",
+        text: "What documents should I bring to my SSN appointment?",
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "msg-2",
+        role: "assistant",
+        text: "For your SSN appointment, you'll need to bring:\n\n1. Original passport with valid F-1 visa\n2. Original I-94 arrival/departure record\n3. Current I-20 with your DSO's signature\n4. Employment authorization letter (job offer or on-campus employment letter)\n5. University admission letter\n\nMake sure all documents are original or certified copies. Photocopies typically aren't accepted. Arrive 15 minutes early and bring the completed SS-5 form.",
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+        sources: [
+          { kind: "milestone", id: "4", label: "SSN Application" },
+          { kind: "document", id: "doc-3", label: "I-20-Initial.pdf" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "thread-2",
+    title: "OPT application timeline",
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    messages: [
+      {
+        id: "msg-3",
+        role: "user",
+        text: "When is my OPT window and what steps are left?",
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "msg-4",
+        role: "assistant",
+        text: "Based on your profile, your OPT application window opens 90 days before your program completion date. You can apply as early as that, but no later than 60 days after completion.\n\nRemaining steps for your OPT:\n1. Confirm eligibility and exact dates with your DSO\n2. Request OPT recommendation from DSO (they'll update your I-20)\n3. Complete Form I-765\n4. Pay the $410 USCIS filing fee\n5. Gather required documents and mail application\n6. Track your application status online\n\nThe entire process typically takes 3-5 months, so plan accordingly. Your application must be received by USCIS within 30 days of your DSO's recommendation date.",
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        sources: [
+          { kind: "milestone", id: "6", label: "OPT Application (I-765)" },
+        ],
+      },
+    ],
   },
 ];

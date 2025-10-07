@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, FileText, Bell, Settings } from "lucide-react";
+import { LayoutDashboard, FileText, Bell, Settings, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/documents", icon: FileText, label: "Documents" },
   { href: "/notifications", icon: Bell, label: "Notifications" },
+  { href: "/advisor", icon: MessageCircle, label: "Advisor" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 

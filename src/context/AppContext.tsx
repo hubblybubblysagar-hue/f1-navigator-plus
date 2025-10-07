@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
-import { Profile, Milestone, AppNotification, StoredDoc } from "@/types";
-import { seedMilestones, seedNotifications, seedDocuments } from "@/data/seed";
+import { Profile, Milestone, AppNotification, StoredDoc, ActivityEntry, ChatThread } from "@/types";
+import { seedMilestones, seedNotifications, seedDocuments, seedActivities, seedChatThreads } from "@/data/seed";
 
 interface AppState {
   profile: Profile | null;
   milestones: Milestone[];
   notifications: AppNotification[];
   documents: StoredDoc[];
+  activities: ActivityEntry[];
+  chatThreads: ChatThread[];
   onboardingComplete: boolean;
 }
 
@@ -21,6 +23,10 @@ type AppAction =
   | { type: "ADD_DOCUMENT"; payload: StoredDoc }
   | { type: "UPDATE_DOCUMENT"; payload: StoredDoc }
   | { type: "DELETE_DOCUMENT"; payload: string }
+  | { type: "ADD_ACTIVITY"; payload: ActivityEntry }
+  | { type: "ADD_CHAT_THREAD"; payload: ChatThread }
+  | { type: "UPDATE_CHAT_THREAD"; payload: ChatThread }
+  | { type: "DELETE_CHAT_THREAD"; payload: string }
   | { type: "COMPLETE_ONBOARDING"; payload: { profile: Profile; milestones: Milestone[] } };
 
 const initialState: AppState = {
@@ -28,6 +34,8 @@ const initialState: AppState = {
   milestones: seedMilestones,
   notifications: seedNotifications,
   documents: seedDocuments,
+  activities: seedActivities,
+  chatThreads: seedChatThreads,
   onboardingComplete: false,
 };
 
@@ -107,6 +115,32 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         documents: state.documents.filter((d) => d.id !== action.payload),
+      };
+
+    case "ADD_ACTIVITY":
+      return {
+        ...state,
+        activities: [action.payload, ...state.activities],
+      };
+
+    case "ADD_CHAT_THREAD":
+      return {
+        ...state,
+        chatThreads: [action.payload, ...state.chatThreads],
+      };
+
+    case "UPDATE_CHAT_THREAD":
+      return {
+        ...state,
+        chatThreads: state.chatThreads.map((t) =>
+          t.id === action.payload.id ? action.payload : t
+        ),
+      };
+
+    case "DELETE_CHAT_THREAD":
+      return {
+        ...state,
+        chatThreads: state.chatThreads.filter((t) => t.id !== action.payload),
       };
 
     case "COMPLETE_ONBOARDING":

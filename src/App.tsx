@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import MilestoneDetail from "./pages/MilestoneDetail";
 import Documents from "./pages/Documents";
 import Notifications from "./pages/Notifications";
+import Advisor from "./pages/Advisor";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/milestone/:id" element={<MilestoneDetail />} />
             <Route path="/documents" element={<Documents />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/advisor" element={<Advisor />} />
             <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -5,6 +5,8 @@ import { Sidebar } from "@/components/Sidebar";
 import { StatsOverview } from "@/components/StatsOverview";
 import { MilestoneCard } from "@/components/MilestoneCard";
 import { NotificationPanel } from "@/components/NotificationPanel";
+import { FloatingAdvisorButton } from "@/components/FloatingAdvisorButton";
+import { InlineActivity } from "@/components/InlineActivity";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PrivacyFooter } from "@/components/PrivacyFooter";
@@ -67,16 +69,23 @@ export default function Dashboard() {
 
                   <TabsContent value={activeTab} className="mt-6 space-y-4">
                     {filterMilestones(activeTab).map((milestone) => (
-                      <MilestoneCard
-                        key={milestone.id}
-                        title={milestone.title}
-                        description={milestone.description}
-                        status={milestone.status}
-                        progress={milestone.progress}
-                        deadline={milestone.due}
-                        icon={getIcon(milestone.icon)}
-                        onClick={() => navigate(`/milestone/${milestone.id}`)}
-                      />
+                      <div key={milestone.id}>
+                        <MilestoneCard
+                          title={milestone.title}
+                          description={milestone.description}
+                          status={milestone.status}
+                          progress={milestone.progress}
+                          deadline={milestone.due}
+                          icon={getIcon(milestone.icon)}
+                          onClick={() => navigate(`/milestone/${milestone.id}`)}
+                        />
+                        <div className="mt-2 px-4">
+                          <InlineActivity
+                            activities={state.activities}
+                            milestoneId={milestone.id}
+                          />
+                        </div>
+                      </div>
                     ))}
                   </TabsContent>
                 </Tabs>
@@ -101,6 +110,7 @@ export default function Dashboard() {
         </main>
       </div>
 
+      <FloatingAdvisorButton />
       <PrivacyFooter />
     </div>
   );

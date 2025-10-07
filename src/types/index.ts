@@ -64,3 +64,38 @@ export interface StoredDoc {
   url?: string;
   size?: number;
 }
+
+export type ActivityType =
+  | 'step_completed'
+  | 'doc_uploaded'
+  | 'status_change'
+  | 'deadline_created'
+  | 'appointment_booked'
+  | 'note_added';
+
+export interface ActivityEntry {
+  id: string;
+  milestoneId?: string;
+  type: ActivityType;
+  title: string;
+  description?: string;
+  createdAt: string;
+  actor: 'user' | 'system';
+  relatedDocId?: string;
+  relatedStepId?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  text: string;
+  createdAt: string;
+  sources?: Array<{ kind: 'document' | 'milestone' | 'activity'; id: string; label: string }>;
+}
+
+export interface ChatThread {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: string;
+}
