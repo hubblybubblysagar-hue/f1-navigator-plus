@@ -9,6 +9,7 @@ interface AdvisorOptions {
 interface AdvisorResponse {
   answer: string;
   sources: Array<{ kind: 'document' | 'milestone' | 'activity'; id: string; label: string }>;
+  actions?: Array<{ id: string; label: string; action: 'generatePrepPack' | 'createReminder' | 'openStep' | 'emailDso'; data?: any }>;
 }
 
 // INTEGRATION: Replace with real backend/RAG call to Lovable AI or another LLM
@@ -21,6 +22,7 @@ export async function askAdvisor(
   await new Promise(resolve => setTimeout(resolve, 800));
 
   const sources: AdvisorResponse['sources'] = [];
+  const actions: AdvisorResponse['actions'] = [];
   let answer = "";
 
   const lowerQ = question.toLowerCase();
@@ -43,6 +45,16 @@ export async function askAdvisor(
       answer = "To be eligible for an SSN as an F-1 student:\n\n✓ You must be physically present in the US for at least 10 days\n✓ You need valid employment authorization (one of the following):\n  - On-campus employment offer\n  - Approved CPT (Curricular Practical Training)\n  - Approved OPT (Optional Practical Training)\n✓ Your I-20 must be current and valid\n✓ You must be maintaining valid F-1 status\n\nIf you don't have employment authorization yet, you cannot apply for an SSN. Once you secure an on-campus job or get CPT/OPT approval, you can proceed with the application.";
     } else {
       answer = "The SSN (Social Security Number) application process for F-1 students involves:\n\n1. Ensuring you have valid employment authorization\n2. Being in the US for at least 10 days\n3. Completing Form SS-5\n4. Booking an appointment at your local SSA office\n5. Bringing all required documents to the appointment\n\nYour SSN card typically arrives by mail within 2-3 weeks after the appointment. You'll need this number for employment, filing taxes, and opening bank accounts.";
+    }
+
+    // Add action buttons for SSN
+    if (ssnMilestone) {
+      actions.push({
+        id: 'ssn-prep',
+        label: 'Generate SSN Prep Pack',
+        action: 'generatePrepPack',
+        data: { milestoneId: ssnMilestone.id }
+      });
     }
   }
   // OPT-related questions
@@ -71,6 +83,22 @@ export async function askAdvisor(
         answer += `\n\n**Processing time:** 3-5 months on average\n**Filing fee:** $410`;
       }
     }
+
+    // Add action buttons for OPT
+    if (optMilestone) {
+      actions.push({
+        id: 'opt-prep',
+        label: 'Generate OPT Prep Pack',
+        action: 'generatePrepPack',
+        data: { milestoneId: optMilestone.id }
+      });
+      actions.push({
+        id: 'opt-reminder',
+        label: 'Set OPT Deadline Reminder',
+        action: 'createReminder',
+        data: { title: 'OPT Application Deadline', milestoneId: optMilestone.id }
+      });
+    }
   }
   // CPT-related questions
   else if (lowerQ.includes("cpt") || lowerQ.includes("curricular practical")) {
@@ -80,6 +108,15 @@ export async function askAdvisor(
     }
 
     answer = "CPT (Curricular Practical Training) allows F-1 students to work off-campus in positions related to their field of study.\n\n**Requirements:**\n- You must have been enrolled full-time for at least one academic year\n- The job must be directly related to your major\n- Your DSO must authorize it on your I-20\n\n**Process:**\n1. Secure a job offer from an employer\n2. Complete your school's CPT request form\n3. Submit to your DSO with the job offer letter\n4. Receive updated I-20 with CPT authorization\n5. Provide I-20 copy to employer before starting work\n\n**Important:** 12+ months of full-time CPT will make you ineligible for OPT.";
+
+    if (cptMilestone) {
+      actions.push({
+        id: 'cpt-email',
+        label: 'Email DSO Template',
+        action: 'emailDso',
+        data: { milestoneId: cptMilestone.id }
+      });
+    }
   }
   // Expiration/deadline questions
   else if (lowerQ.includes("expire") || lowerQ.includes("deadline") || lowerQ.includes("upcoming")) {
@@ -129,5 +166,5 @@ export async function askAdvisor(
     answer = "I'm here to help with questions about your F-1 visa journey, including:\n\n- SSN application process and requirements\n- OPT and CPT authorization\n- I-20 management and travel signatures\n- Document requirements and deadlines\n- Timeline planning for your milestones\n\nYou can ask me specific questions like:\n- \"What should I bring to my SSN appointment?\"\n- \"When is my OPT application window?\"\n- \"What documents do I need for international travel?\"\n- \"What expires next?\"\n\nFeel free to attach relevant documents or enable profile/milestone context for more personalized guidance.";
   }
 
-  return { answer, sources };
+  return { answer, sources, actions: actions.length > 0 ? actions : undefined };
 }

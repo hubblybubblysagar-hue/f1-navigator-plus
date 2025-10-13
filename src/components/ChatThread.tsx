@@ -2,16 +2,24 @@ import { ChatMessage } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Bot, Copy, ExternalLink } from "lucide-react";
+import { User, Bot, Copy, ExternalLink, Package, Bell, Mail } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 interface ChatThreadProps {
   messages: ChatMessage[];
+  onAction?: (action: any) => void;
 }
 
-export function ChatThread({ messages }: ChatThreadProps) {
+const actionIcons = {
+  generatePrepPack: Package,
+  createReminder: Bell,
+  emailDso: Mail,
+  openStep: ExternalLink
+};
+
+export function ChatThread({ messages, onAction }: ChatThreadProps) {
   const navigate = useNavigate();
 
   const handleCopy = (text: string) => {
@@ -84,6 +92,26 @@ export function ChatThread({ messages }: ChatThreadProps) {
                         <ExternalLink className="h-3 w-3" />
                       </Button>
                     ))}
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                {!isUser && (message as any).actions && (
+                  <div className="flex flex-wrap gap-2">
+                    {(message as any).actions.map((action: any) => {
+                      const IconComponent = actionIcons[action.action as keyof typeof actionIcons] || ExternalLink;
+                      return (
+                        <Button
+                          key={action.id}
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => onAction?.(action)}
+                        >
+                          <IconComponent className="h-3 w-3 mr-2" />
+                          {action.label}
+                        </Button>
+                      );
+                    })}
                   </div>
                 )}
               </div>

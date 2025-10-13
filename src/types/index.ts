@@ -99,3 +99,38 @@ export interface ChatThread {
   messages: ChatMessage[];
   createdAt: string;
 }
+
+export type RiskLevel = 'green' | 'amber' | 'red';
+
+export interface Blocker {
+  id: string;
+  label: string;
+  kind: 'doc' | 'date' | 'eligibility';
+  milestoneId: string;
+  stepId?: string;
+}
+
+export interface NextAction {
+  id: string;
+  label: string;
+  cta: 'openStep' | 'openUpload' | 'createReminder' | 'generatePrepPack' | 'openAppointment' | 'openForm';
+  milestoneId: string;
+  stepId?: string;
+  icon?: string;
+}
+
+export interface PrepPack {
+  id: string;
+  milestoneId: string;
+  title: string;
+  checklist: string[];
+  includedDocIds: string[];
+  notes?: string;
+}
+
+export interface ShareToken {
+  id: string;
+  milestoneId: string;
+  expiresAt: string;
+  createdAt: string;
+}
